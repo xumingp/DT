@@ -8,11 +8,11 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
 
 # 设备文件复制
 # fstab.ab          → ramdisk 第一阶段挂载用（init 读取）
-# twrp.fstab        → TWRP 分区管理用（备份/挂载/清除）
 # init.recovery.qcom.rc → 从设备提取的 recovery 启动脚本
+# 注意：twrp.fstab 不要手动复制到 etc/，会与基线 ramdisk 的 etc 符号链接冲突，
+#       它由 BoardConfig 中的 TARGET_RECOVERY_FSTAB 自动处理
 PRODUCT_COPY_FILES += \
     device/Readboy/msm8998/fstab.ab:root/fstab.ab \
-    device/Readboy/msm8998/twrp.fstab:recovery/root/etc/twrp.fstab \
     device/Readboy/msm8998/init.recovery.qcom.rc:root/init.recovery.qcom.rc
 
 # 设备属性 + ADB 强制开启（PRODUCT_PROPERTY_OVERRIDES 只能在产品mk中设置，不能在BoardConfig中）
