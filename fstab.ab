@@ -1,0 +1,9 @@
+# Android 第一阶段挂载 fstab — recovery ramdisk 使用
+# 从设备原生 fstab 提取，保留原始挂载选项
+# 注意：TWRP 不需要在此挂载 /data，data 由 TWRP 自行管理
+/dev/block/bootdevice/by-name/system    /system     ext4    ro,barrier=1,discard                             wait,slotselect
+/dev/block/bootdevice/by-name/vendor    /vendor     ext4    ro,barrier=1,discard                             wait,slotselect
+/dev/block/bootdevice/by-name/userdata  /data       ext4    noatime,nosuid,nodev,barrier=1,noauto_da_alloc,discard    wait,check
+/dev/block/bootdevice/by-name/misc      /misc       emmc    defaults                                         defaults
+/dev/block/bootdevice/by-name/boot      /boot       emmc    defaults                                         defaults
+/dev/block/bootdevice/by-name/persist   /persist    ext4    noatime,nosuid,nodev,barrier=1                   defaults

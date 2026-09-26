@@ -1,0 +1,15 @@
+# TWRP 分区表 — msm8998 (Readboy C30)
+# 格式：<挂载点> <文件系统> <设备路径> <flags>
+# 注意：
+#   - AB 分区必须加 slotselect，TWRP 自动操作当前槽位
+#   - System-as-Root 设备的 system 挂载点为 /system_root
+#   - 若设备无 MicroSD 卡槽，删除最后一行
+#
+/system_root   ext4   /dev/block/bootdevice/by-name/system    flags=backup=1;display="System";slotselect
+/vendor        ext4   /dev/block/bootdevice/by-name/vendor    flags=backup=1;display="Vendor";slotselect
+/data          ext4   /dev/block/bootdevice/by-name/userdata  flags=encryptable=footer;backup=1;display="Data"
+/boot          emmc   /dev/block/bootdevice/by-name/boot      flags=backup=1;display="Boot";slotselect
+/misc          emmc   /dev/block/bootdevice/by-name/misc      flags=display="Misc"
+/persist       ext4   /dev/block/bootdevice/by-name/persist   flags=display="Persist"
+/modem         emmc   /dev/block/bootdevice/by-name/modem     flags=backup=1;display="Modem"
+# /sdcard       vfat   /dev/block/mmcblk0p1                    flags=removable;storage;display="MicroSD"
