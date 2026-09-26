@@ -84,13 +84,6 @@ TW_ADB_ENABLED := true
 TW_ALWAYS_ENABLE_ADB := true
 TW_ADB_INSECURE := true
 
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.adb.secure=0 \
-    ro.secure=0 \
-    ro.debuggable=1 \
-    service.adb.enable=1 \
-    sys.usb.config=adb,mtp
-
 TW_INCLUDE_USB := true
 TW_INCLUDE_MTP := true
 TW_INCLUDE_OTG := true
