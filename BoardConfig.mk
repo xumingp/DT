@@ -94,7 +94,7 @@ TW_NO_EXFAT_FUSE := false
 ###########################################################################
 # TWRP 核心功能
 ###########################################################################
-TW_THEME := landscape_xhdpi
+TW_THEME := landscape_hdpi
 TW_NO_SCREEN_BLANK := true
 TW_USE_TOOLBOX := true
 TW_INCLUDE_BASH := true
