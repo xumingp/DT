@@ -30,6 +30,11 @@ ENABLE_VIRTUAL_AB := false
 AB_OTA_UPDATER := true
 AB_OTA_PARTITIONS ?= boot system vendor
 
+# boot 分区大小（recovery-as-boot，boot.img 即 recovery）
+# 实际生成约 52MB，设为 64MB；若刷入提示空间不足，在设备上执行
+# blockdev --getsize64 /dev/block/bootdevice/by-name/boot 获取真实分区大小后替换
+BOARD_BOOTIMAGE_PARTITION_SIZE := 67108864
+
 # AVB：已解BL锁的设备设为false即可；若开机提示AVB验证失败再改为true
 BOARD_AVB_ENABLE := false
 BOARD_AVB_RECOVERY_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
