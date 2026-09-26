@@ -40,18 +40,17 @@ BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION := 1
 ###########################################################################
 # 预编译内核配置（boot header v0，已通过 magiskboot unpack -h 确认）
 #
-# ⚠️ 需要将以下两个文件放到设备树根目录（与本文件同级）：
-#    1. kernel      — 合并后的内核（cat kernel kernel_dtb > kernel）
-#    2. kernel_dtb  — 原始独立 dtb（构建系统需要它生成 dtb.img 以满足依赖）
+# ⚠️ v0 header 不支持 --dtb，DTB 必须追加到 kernel 末尾（Image.gz-dtb 格式）。
+#    在解包目录执行：cat kernel kernel_dtb > kernel
+#    （合并后 kernel 大小 = 原 kernel + kernel_dtb 之和，用 ls -l 验证）
 #
-#    v0 header 不支持 --dtb，DTB 已追加到 kernel 末尾；BOARD_PREBUILT_DTB
-#    仅用于让构建系统生成 dtb.img，不会被打进 boot.img
+#    注意：不要定义 BOARD_INCLUDE_DTB_IN_BOOTIMG！AOSP 用 ifdef 判断，
+#    即使设为 false 也会触发对 dtb.img 的依赖，导致打包失败。
+#    将合并后的 kernel 放到设备树根目录（与本文件同级）。
 ###########################################################################
 TARGET_PREBUILT_KERNEL := device/Readboy/msm8998/kernel
 TARGET_NO_KERNEL := false
 BOARD_KERNEL_IMAGE_NAME := kernel
-BOARD_INCLUDE_DTB_IN_BOOTIMG := false
-BOARD_PREBUILT_DTB := device/Readboy/msm8998/kernel_dtb
 
 # v0 boot header 不存储偏移量，以下为 msm8998 平台标准默认值，直接使用即可
 BOARD_KERNEL_BASE := 0x80000000
@@ -76,7 +75,7 @@ BOARD_MKBOOTIMG_ARGS := \
 ###########################################################################
 TARGET_RECOVERY_FSTAB := device/Readboy/msm8998/twrp.fstab
 TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
-TARGET_RECOVERY_UI_LIB := librecovery_ui_msm
+# 不设置 TARGET_RECOVERY_UI_LIB，使用 TWRP 默认 recovery UI（librecovery_ui_msm 无源码提供）
 
 ###########################################################################
 # ADB 与 USB
