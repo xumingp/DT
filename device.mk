@@ -4,7 +4,6 @@
 
 # 继承顺序：先基础系统，再QCOM通用，最后本设备
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
-$(call inherit-product, device/qcom/common/common.mk)
 
 # 设备文件复制
 # fstab.ab          → ramdisk 第一阶段挂载用（init 读取）

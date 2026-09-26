@@ -38,34 +38,37 @@ BOARD_AVB_RECOVERY_ROLLBACK_INDEX := 1
 BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION := 1
 
 ###########################################################################
-# 预编译内核配置
-# ⚠️ 必须将 boot.img 解包得到的 kernel 和 kernel_dtb 两个文件
-#     放到设备树根目录（与本文件同级）
+# 预编译内核配置（boot header v0，已通过 magiskboot unpack -h 确认）
+#
+# ⚠️ magiskboot 解包出的 kernel 和 kernel_dtb 是分离的。
+#    v0 header 不支持 --dtb 参数，DTB 必须追加到 kernel 末尾（Image.gz-dtb 格式）。
+#    在解包目录执行：
+#      cat kernel kernel_dtb > kernel
+#    （合并后 kernel 大小 = 原 kernel + kernel_dtb 之和，用 ls -l 验证）
+#    然后将合并后的 kernel 放到设备树根目录（与本文件同级）
 ###########################################################################
 TARGET_PREBUILT_KERNEL := device/Readboy/msm8998/kernel
 TARGET_NO_KERNEL := false
 BOARD_KERNEL_IMAGE_NAME := kernel
-BOARD_INCLUDE_DTB_IN_BOOTIMG := true
+BOARD_INCLUDE_DTB_IN_BOOTIMG := false
 
-# ⚠️ 以下参数必须用你自己 boot.img 解包后 split_img 目录里的实际值！
-#    用 AIK (Android Image Kitchen) 解包后查看对应 .txt 文件
-BOARD_KERNEL_BASE := 0x80000000        # 来自 *-base.txt
-BOARD_KERNEL_PAGESIZE := 4096          # 来自 *-pagesize.txt
-BOARD_KERNEL_OFFSET := 0x00008000      # 来自 *-kernel_offset.txt
-BOARD_RAMDISK_OFFSET := 0x01000000     # 来自 *-ramdisk_offset.txt
-BOARD_TAGS_OFFSET := 0x00000100        # 来自 *-tags_offset.txt
-# BOARD_BOOT_HEADER_VERSION := 2       # 若解包信息显示header v2则取消注释
+# v0 boot header 不存储偏移量，以下为 msm8998 平台标准默认值，直接使用即可
+BOARD_KERNEL_BASE := 0x80000000
+BOARD_KERNEL_PAGESIZE := 4096
+BOARD_KERNEL_OFFSET := 0x00008000
+BOARD_RAMDISK_OFFSET := 0x01000000
+BOARD_TAGS_OFFSET := 0x00000100
 
-# ⚠️ 必须填写：在安卓系统中执行 `cat /proc/cmdline` 获取完整内容后填入
-BOARD_KERNEL_CMDLINE := console=ttyMSM0,115200,n8 androidboot.console=ttyMSM0 androidboot.hardware=qcom msm_rtb.filter=0x237 ehci-hcd.park=3 androidboot.bootdevice=1da4000.ufshc loop.max_part=7
+# 从 boot header 提取的原始 CMDLINE（magiskboot unpack -h 确认）
+BOARD_KERNEL_CMDLINE := console=ttyMSM0,115200,n8 androidboot.console=ttyMSM0 earlycon=msm_serial_dm,0xc1b0000 androidboot.hardware=qcom user_debug=31 msm_rtb.filter=0x37 ehci-hcd.park=3 lpm_levels.sleep_disabled=1 sched_enable_hmp=1 sched_enable_power_aware=1 service_locator.enable=1 swiotlb=2048 androidboot.configfs=true androidboot.usbcontroller=a800000.dwc3 loop.max_part=7 buildvariant=user veritykeyid=id:7e4333f9bba00adfe0ede979e28ed1920492b40f
 
+# v0 header 不支持 --dtb，DTB 已合并进 kernel 文件中
 BOARD_MKBOOTIMG_ARGS := \
     --base $(BOARD_KERNEL_BASE) \
     --pagesize $(BOARD_KERNEL_PAGESIZE) \
     --kernel_offset $(BOARD_KERNEL_OFFSET) \
     --ramdisk_offset $(BOARD_RAMDISK_OFFSET) \
-    --tags_offset $(BOARD_TAGS_OFFSET) \
-    --dtb device/Readboy/msm8998/kernel_dtb
+    --tags_offset $(BOARD_TAGS_OFFSET)
 
 ###########################################################################
 # TWRP  Recovery 使用的 fstab
@@ -98,7 +101,7 @@ TW_NO_EXFAT_FUSE := false
 ###########################################################################
 # TWRP 核心功能
 ###########################################################################
-TW_THEME := portrait_hdpi
+TW_THEME := landscape_xhdpi
 TW_NO_SCREEN_BLANK := true
 TW_USE_TOOLBOX := true
 TW_INCLUDE_BASH := true
@@ -127,7 +130,7 @@ TW_HAS_NO_REAL_PARTITIONS := false
 ###########################################################################
 TW_INCLUDE_CRYPTO := true
 TW_INCLUDE_CRYPTO_FBE := true
-# ⚠️ 必须修改：设置 → 关于手机 → 安全补丁级别，完全一致的日期
+# 安全补丁日期：从 boot header OS_PATCH_LEVEL 确认 = 2019-09
 PLATFORM_SECURITY_PATCH := 2019-09-05
 
 ###########################################################################
@@ -153,12 +156,11 @@ TW_INCLUDE_PROP_TOOLS := true
 TW_INCLUDE_SELINUX_TOOLS := true
 
 ###########################################################################
-# ⚠️ 屏幕参数：必须从你设备的 dts/iommu 或实际分辨率获取
-#    当前为占位值，请替换为你设备的真实分辨率
+# 屏幕参数：横屏 2560x1600（ts125qdm 12.5寸 split_dsi 面板，已确认）
 ###########################################################################
-TW_SCREEN_WIDTH := 1600
-TW_SCREEN_HEIGHT := 2560
-TW_TOUCHSCREEN_WIDTH := 1600
-TW_TOUCHSCREEN_HEIGHT := 2560
+TW_SCREEN_WIDTH := 2560
+TW_SCREEN_HEIGHT := 1600
+TW_TOUCHSCREEN_WIDTH := 2560
+TW_TOUCHSCREEN_HEIGHT := 1600
 TW_MAX_BRIGHTNESS := 255
 TW_DEFAULT_BRIGHTNESS := 150
