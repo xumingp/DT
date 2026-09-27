@@ -45,13 +45,20 @@ BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION := 1
 ###########################################################################
 # 预编译内核配置（boot header v0，已通过 magiskboot unpack -h 确认）
 #
-# ⚠️ v0 header 不支持 --dtb，DTB 必须追加到 kernel 末尾（Image.gz-dtb 格式）。
-#    在解包目录执行：cat kernel kernel_dtb > kernel
-#    （合并后 kernel 大小 = 原 kernel + kernel_dtb 之和，用 ls -l 验证）
+# ⚠️ 重要：magiskboot unpack 会【自动解压】kernel！解包出的 kernel 是未压缩
+#    ARM64 Image（约39MB，开头不是1f8b）。但原始 boot.img 里 kernel 是
+#    gzip 压缩的（KERNEL_FMT=gzip），必须重新压缩，否则 bootloader 无法加载！
+#
+#    正确制作流程（在解包目录）：
+#      gzip -n kernel                    # 未压缩Image → kernel.gz（约12.6MB）
+#      cat kernel.gz kernel_dtb > kernel # 追加dtb，得到 Image.gz-dtb（约14.6MB）
+#
+#    验证最终 kernel：
+#      head -c 2 kernel | xxd            # 必须显示 1f8b（gzip魔数）
+#      ls -l kernel                      # 大小应接近 15320679
 #
 #    注意：不要定义 BOARD_INCLUDE_DTB_IN_BOOTIMG！AOSP 用 ifdef 判断，
-#    即使设为 false 也会触发对 dtb.img 的依赖，导致打包失败。
-#    将合并后的 kernel 放到设备树根目录（与本文件同级）。
+#    即使设为 false 也会触发 dtb.img 依赖。
 ###########################################################################
 TARGET_PREBUILT_KERNEL := device/Readboy/msm8998/kernel
 TARGET_NO_KERNEL := false
