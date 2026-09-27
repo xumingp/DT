@@ -25,6 +25,9 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
+# 高通 FBE 解密服务脚本（由 qcom_decrypt_fbe 包自动生成提供）
+import /init.recovery.qcom_decrypt.rc
+
 on init
     write /sys/class/backlight/panel0-backlight/brightness 200
 

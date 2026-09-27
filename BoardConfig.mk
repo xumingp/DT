@@ -135,6 +135,7 @@ TW_HAS_NO_REAL_PARTITIONS := false
 ###########################################################################
 TW_INCLUDE_CRYPTO := true
 TW_INCLUDE_CRYPTO_FBE := true
+BOARD_USES_QCOM_FBE_DECRYPTION := true
 # 安全补丁日期：从 boot header OS_PATCH_LEVEL 确认 = 2019-09
 PLATFORM_SECURITY_PATCH := 2019-09-05
 
