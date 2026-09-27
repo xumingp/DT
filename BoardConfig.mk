@@ -131,13 +131,36 @@ TW_INCLUDE_WIPE_DALVIK := true
 TW_HAS_NO_REAL_PARTITIONS := false
 
 ###########################################################################
-# Android 10 FBE 加密解密
+# Android 10 FDE 全盘加密（原厂 fstab 标志 = forceencrypt=footer，已确认）
+# 注意：本机不是 FBE！不要使用 TW_INCLUDE_CRYPTO_FBE /
+#       BOARD_USES_QCOM_FBE_DECRYPTION，否则会先误试 FBE 再回退。
 ###########################################################################
 TW_INCLUDE_CRYPTO := true
-TW_INCLUDE_CRYPTO_FBE := true
-BOARD_USES_QCOM_FBE_DECRYPTION := true
+TARGET_HW_DISK_ENCRYPTION := true
+TARGET_KEYMASTER_WAIT_FOR_QSEE := true
 # 安全补丁日期：从 boot header OS_PATCH_LEVEL 确认 = 2019-09
 PLATFORM_SECURITY_PATCH := 2019-09-05
+
+# keymaster HIDL 依赖的基础库（FDE 的 KDF 同样需要 keymaster 4.0）
+TARGET_RECOVERY_DEVICE_MODULES += \
+    android.hidl.allocator@1.0 \
+    android.hidl.memory@1.0 \
+    android.hidl.memory.token@1.0 \
+    libdmabufheap \
+    libhidlmemory \
+    libion \
+    libnetutils \
+    libdebuggerd_client
+
+RECOVERY_LIBRARY_SOURCE_FILES += \
+    $(TARGET_OUT_SHARED_LIBRARIES)/android.hidl.allocator@1.0.so \
+    $(TARGET_OUT_SHARED_LIBRARIES)/android.hidl.memory@1.0.so \
+    $(TARGET_OUT_SHARED_LIBRARIES)/android.hidl.memory.token@1.0.so \
+    $(TARGET_OUT_SHARED_LIBRARIES)/libdmabufheap.so \
+    $(TARGET_OUT_SHARED_LIBRARIES)/libhidlmemory.so \
+    $(TARGET_OUT_SHARED_LIBRARIES)/libion.so \
+    $(TARGET_OUT_SHARED_LIBRARIES)/libnetutils.so \
+    $(TARGET_OUT_SHARED_LIBRARIES)/libdebuggerd_client.so
 
 ###########################################################################
 # 其他功能

@@ -32,8 +32,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # 解决"重启到系统/切槽失败"：提供 bootctl（TWRP 重启菜单的 Slot 切换/重启系统依赖它）
 PRODUCT_PACKAGES += bootctl
 
-# 高通 FBE 解密组件（配合 BoardConfig 的 BOARD_USES_QCOM_FBE_DECRYPTION）
-# 自动生成 /init.recovery.qcom_decrypt.rc，负责启动 qseecomd / keymaster / gatekeeper
+# 高通 FDE 全盘加密组件（原厂 fstab: forceencrypt=footer）
+# 生成 /init.recovery.qcom_decrypt.rc，负责启动 qseecomd / keymaster
 PRODUCT_PACKAGES_ENG += \
-    qcom_decrypt \
-    qcom_decrypt_fbe
+    qcom_decrypt
